@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+<meta http-equiv='keywords' content='' />
+<meta http-equiv='description' content='' />
+<meta name="author" content="Lim Hyun">
+
+<style>
+html, body, div, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+}
+a {
+	color: #333;
+	text-decoration: none;
+	cursor: pointer;
+}
+a:hover, a.active {
+	color: #333;
+	text-decoration: underline;
+}
+ul, ol {
+	list-style: none;
+}
+.data-tab-menu, .event_menu {
+	margin-bottom: 30px;
+	border-width: 0 0 1px;
+	border-style: solid;
+	border-color: #888888 transparent #dfdfdf;
+	border-top: 2px solid #999999;
+	background-color: #f3f3f3;
+}
+.data-tab-menu:before, .data-tab-menu:after, .event_menu:before, .event_menu:after {
+	content: '';
+	display: table;
+}
+.data-tab-menu:after, .event_menu:after {
+	clear: both;
+}
+.data-tab-menu:before, .data-tab-menu:after, .event_menu:before, .event_menu:after {
+	content: '';
+	display: table;
+}
+.data-tab-menu li.active, .data-tab-menu li.on, .event_menu li.active, .event_menu li.on {
+	position: relative;
+	margin-bottom: -1px;
+}
+.data-tab-menu li:first-child, .event_menu li:first-child {
+	border-left: 1px solid #dfdfdf;
+}
+.data-tab-menu li, .event_menu li {
+	float: left;
+}
+.data-tab-menu li.active a, .data-tab-menu li.on a, .event_menu li.active a, .event_menu li.on a {
+	font-weight: bold;
+	color: #333;
+	background-color: #fff;
+	border-bottom: 1px solid white;
+}
+.data-tab-menu a, .event_menu a {
+	display: block;
+	padding: 8px 29px 9px;
+	border-right: 1px solid #dfdfdf;
+	font-size: 12px;
+	color: #888;
+	text-decoration: none;
+}
+.data-tab-menu a:hover, .event_menu a:hover {
+	background-color: #e5e5e5;
+}
+.data-tab {
+	display: none;
+	border: 0px;
+	clear: both;
+	word-break: break-all;
+}
+.tab-inside {
+	background-color: #e5e5e5;
+}
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript">
+function WmInitMoviePlayer(){
+	// append layers(player and player-background) to the body tag
+	var play_btn_url = "btn_play.png";
+	var player_bg = $('body').append('<div id="movie-player-bg" />').children('#movie-player-bg');
+	player_bg.css({
+		 "display":"none"
+		, "position": "fixed"
+		, "width": "100%"
+		, "height": "100%"
+		, "background": "#000"
+		, "z-index": "1000"
+		, "top": "0px"
+		, "opacity": ".6"
+		, "filter": "alpha(opacity=60)"
+	});
+	var player = $('body').append('<div id="movie-player" />').children('#movie-player');
+	player.bind({
+		click: function(){
+			hideMoviePlayer()
+		}
+	}).css({
+		"display":"none"
+		, "position": "fixed"
+		, "width": "100%"
+		, "height":"100%"
+		, "z-index": "1001"
+		, "top": "0px"
+	});
+	$('<div/>').attr('id', "movie-player-iframe").css({"margin":"0 auto 0 auto"}).appendTo(player);
+
+	// find youtube data tags
+	$(".youtub-player").each(function(index) {
+		var url = $(this).attr("data-url");
+		var size_text = $(this).attr("data-size");
+		var size = size_text.split(',');
+		$(this).bind({
+			click: function(){
+				viewMoviePlayer(url, size[0], size[1]);
+			}
+		}).css({
+			"cursor":"pointer"
+			,"display": "inline-block"
+			,"position": "relative"
+		});
+		var mode = $(this).attr("data-mode");
+		if(mode != undefined || mode == "img"){
+			var w = $(this).find('img').attr("width");
+			var h = $(this).find('img').attr("height");
+			if(parseInt(w) > 0 && parseInt(h) > 0){
+				$('<span/>').css({
+					"position":"absolute"
+					,"top":"0"
+					,"left":"0"
+					,"width":w+"px"
+					,"height":h+"px"
+					,"background":"url("+play_btn_url+") no-repeat center center"
+				}).appendTo(this);
+			}
+		}
+	});
+
+}
+function hideMoviePlayer(){
+	$("#movie-player").hide();
+	$("#movie-player-bg").hide();
+	$("#movie-player-iframe").html("");
+}
+function viewMoviePlayer(idx, w, h) {
+	var topbar_h = 35;
+	var url = "http://www.youtube.com/embed/"+idx+"?autoplay=1";
+	var tag = "<iframe width=\""+w+"\" height=\""+h+"\" src=\""+url+"\" frameborder=\"0\" allowfullscreen></iframe>";
+	var win_h = $(window).innerHeight() - topbar_h;
+	var margin = parseInt((win_h/2) - (h/2));
+	if(margin < topbar_h) margin = topbar_h;
+
+	$("#movie-player-iframe").html(tag).css({"width":w, "height":h, "margin-top":margin+"px"});
+	$("#movie-player").show();
+	$("#movie-player-bg").show();
+}
+$(document).ready(function () {
+	WmInitMoviePlayer();
+});
+</script>
+</head>
+<body>
+<div>
+	<h4>Youtube動画</h4>
+
+【설명】
+<table border="0">
+	<tr valign="top">
+		<td>data-url　</td>
+		<td>： Youtube비디오ID (필수)</td>
+	</tr>
+	<tr valign="top">
+		<td>data-size　</td>
+		<td>： 화면에 표시할 사이즈 (폭 * 높이 / 필수)</td>
+	</tr>
+	<tr valign="top">
+		<td>data-mode　</td>
+		<td>： span태그에 이미지를 사용할 것인가 지정 (옵션)<br>
+		단, 이미지에 "width" 와 "height"가 설정되어 있지 않으면 이미지가 표시되지 않음
+		</td>
+	</tr>
+	<tr valign="top">
+		<td>참고</td>
+		<td>: 기본적으로 화면의 높이가 동영상 플레이어의 높이보다 낮으면 위쪽에 35픽셀의 마진을 주게됨.<br>
+		회색영역을 클릭하면 닫힘.
+		</td>
+	</tr>
+</table>
+<br><br>
+
+1. 이미지사용 （플레이 아이콘 있는 버젼）<br>
+<span class="youtub-player" data-url="_9MFxxobUcY" data-size="800,600" data-mode="img">
+	<img src="banner.jpg" width="260" height="90">
+</span><br>
+<xmp>
+<span class="youtub-player" data-url="_9MFxxobUcY" data-size="800,600" data-mode="img">
+	<img src="banner.jpg" width="260" height="90">
+</span>
+</xmp>
+<br>
+
+2. 이미지사용（플레이 아이콘 없는 버젼）<br>
+<span class="youtub-player" data-url="_9MFxxobUcY" data-size="800,600" data-mode="img">
+	<img src="banner.jpg">
+</span><br>
+<xmp>
+<span class="youtub-player" data-url="_9MFxxobUcY" data-size="800,600" data-mode="img">
+	<img src="banner.jpg">
+</span>
+</xmp>
+<br>
+
+3. 텍스트사용1<br>
+<span class="youtub-player" data-url="_9MFxxobUcY" data-size="800,600" data-mode="text">
+	Play
+</span><br>
+<xmp>
+<span class="youtub-player" data-url="_9MFxxobUcY" data-size="800,600" data-mode="text">
+	Play
+</span>
+</xmp>
+<br>
+
+4. 텍스트사용2<br>
+<span class="youtub-player" data-url="_9MFxxobUcY" data-size="800,600">
+	Play
+</span><br>
+<xmp>
+<span class="youtub-player" data-url="_9MFxxobUcY" data-size="800,600">
+	Play
+</span>
+</xmp>
+
+</div>
+
+
+</body>
+</html>
