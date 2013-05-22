@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+<meta http-equiv='keywords' content='' />
+<meta http-equiv='description' content='' />
+<meta name="author" content="Lim Hyun">
+
+<style>
+html, body, div, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+}
+a {
+	color: #333;
+	text-decoration: none;
+	cursor: pointer;
+}
+a:hover, a.active {
+	color: #333;
+	text-decoration: underline;
+}
+ul, ol {
+	list-style: none;
+}
+.data-tab-menu, .event_menu {
+	margin-bottom: 30px;
+	border-width: 0 0 1px;
+	border-style: solid;
+	border-color: #888888 transparent #dfdfdf;
+	border-top: 2px solid #999999;
+	background-color: #f3f3f3;
+}
+.data-tab-menu:before, .data-tab-menu:after, .event_menu:before, .event_menu:after {
+	content: '';
+	display: table;
+}
+.data-tab-menu:after, .event_menu:after {
+	clear: both;
+}
+.data-tab-menu:before, .data-tab-menu:after, .event_menu:before, .event_menu:after {
+	content: '';
+	display: table;
+}
+.data-tab-menu li.active, .data-tab-menu li.on, .event_menu li.active, .event_menu li.on {
+	position: relative;
+	margin-bottom: -1px;
+}
+.data-tab-menu li:first-child, .event_menu li:first-child {
+	border-left: 1px solid #dfdfdf;
+}
+.data-tab-menu li, .event_menu li {
+	float: left;
+}
+.data-tab-menu li.active a, .data-tab-menu li.on a, .event_menu li.active a, .event_menu li.on a {
+	font-weight: bold;
+	color: #333;
+	background-color: #fff;
+	border-bottom: 1px solid white;
+}
+.data-tab-menu a, .event_menu a {
+	display: block;
+	padding: 8px 29px 9px;
+	border-right: 1px solid #dfdfdf;
+	font-size: 12px;
+	color: #888;
+	text-decoration: none;
+}
+.data-tab-menu a:hover, .event_menu a:hover {
+	background-color: #e5e5e5;
+}
+.data-tab {
+	display: none;
+	border: 0px;
+	clear: both;
+	word-break: break-all;
+}
+.tab-inside {
+	background-color: #e5e5e5;
+}
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript">
+function WkInitTabIndex(){
+	$(".data-tab-menu li").each(function(index) {
+		var text = $(this).attr("data-tab");
+		var idx = text.split('-');
+		$(this).bind({
+			click: function(){
+				WkChgTabIndex(idx[0], idx[1]);
+				$(this).addClass("on");
+			},
+			mouseenter: function(){
+				$(this).addClass("tab-inside");
+			},
+			mouseleave: function(){
+				$(this).removeClass("tab-inside");
+			}
+		});
+		if(idx[1] == 1){
+			WkChgTabIndex(idx[0], idx[1]);
+			$(this).addClass("on");
+		};
+	});
+}
+function WkChgTabIndex(idx1, idx2){
+	var i=1, obj;
+	while(1){
+		obj = $(".data-tab-"+idx1+"-"+i);
+		if(obj.length) break;
+		jQuery(obj).hide();
+		$('li[data-tab="'+idx1+"-"+i+'"]').removeClass("on");
+		i++;
+	};
+	$(".data-tab-"+idx1+"-"+idx2).show();
+}
+$(document).ready(function () {
+	WkInitTabIndex();
+});
+</script>
+</head>
+<body>
+<div>
+	<p>
+		사용법：<br>
+		li태그에 data-tab와 일치하는 번호의 data-tab 내용이 표시됨.<br>
+		例：）li의　data-tab="1-1" ->　data-tab data-tab-1-1의 내용<br>
+		&lt; li data-tab="[그룹번호]-[순번]" &gt;<br>
+		&lt; div class="data-tab data-tab-[그룹번호]-[순번]" &gt;<br>
+		（注）[그룹번호]、[순번] 조합이 중복될 경우 오동작을 일으킬 수 있음.
+	</p>
+	<hr>
+	<ul class="data-tab-menu">
+		<li data-tab="1-1"><a href="javascript:;">TAB 1-1</a></li>
+		<li data-tab="1-2"><a href="javascript:;">TAB 1-2</a></li>
+		<li data-tab="1-3"><a href="javascript:;">TAB 1-3</a></li>
+	</ul>
+	<div class="data-tab data-tab-1-1">
+		TAB 1-1의 내용<br>
+	</div>
+	<div class="data-tab data-tab-1-2">
+		TAB 1-2의 내용<br>
+	</div>
+	<div class="data-tab data-tab-1-3">
+		TAB 1-3의 내용<br>
+	</div>
+	
+	<hr>
+	
+	<ul class="data-tab-menu">
+	<li data-tab="2-1"><a href="javascript:;">TAB 2-1</a></li>
+	<li data-tab="2-2"><a href="javascript:;">TAB 2-2</a></li>
+	<li data-tab="2-3"><a href="javascript:;">TAB 2-3</a></li>
+	</ul>
+	<div class="data-tab data-tab-2-1">
+		TAB 2-1의 내용<br>
+	</div>
+	<div class="data-tab data-tab-2-2">
+		TAB 2-2의 내용<br>
+	</div>
+	<div class="data-tab data-tab-2-3">
+		TAB 2-3의 내용<br>
+	</div>
+	<hr>
+
+</div>
+</body>
+</html>
